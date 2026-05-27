@@ -1,5 +1,6 @@
 import express, { type Request, type Response } from 'express';
 import env from './config/env';
+import { routes } from './routes';
 
 export const app = express();
 
@@ -11,3 +12,7 @@ app.get('/health', (_req: Request, res: Response) => {
     environment: env.envName,
   });
 });
+
+app.use('/api', routes);
+
+// todo - add error handler middleware
