@@ -17,7 +17,7 @@ export class OrganizationModel extends Model<
   declare id: CreationOptional<string>;
   declare name: string;
   declare industry: string | null;
-  declare dateFounded: Date | null;
+  declare dateFounded: string | null; // in YYYY-MM-DD format
 
   declare users?: NonAttribute<UserModel[]>;
   declare orders?: NonAttribute<OrderModel[]>;
@@ -39,7 +39,7 @@ OrganizationModel.init(
       allowNull: true,
     },
     dateFounded: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
   },
