@@ -1,4 +1,4 @@
-import { ValidationError } from '../../shared/http-errors';
+import { NotFoundError, ValidationError } from '../../shared/http-errors';
 import { organizationRepository } from './organization.repository';
 import type { CreateOrganizationBodyDto } from './organization.schemas';
 import type { Organization, OrganizationResponseDto } from './organization.types';
@@ -10,6 +10,16 @@ export const organizationService = {
     }
 
     const organization = await organizationRepository.create(dto);
+
+    return toOrganizationResponseDto(organization);
+  },
+
+  async findById(id: string): Promise<OrganizationResponseDto> {
+    const organization = await organizationRepository.findById(id);
+
+    if (!organization) {
+      throw new NotFoundError();
+    }
 
     return toOrganizationResponseDto(organization);
   },
