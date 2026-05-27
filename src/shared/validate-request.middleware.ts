@@ -4,14 +4,22 @@ import type { ZodType } from 'zod';
 import { ValidationError } from './http-errors';
 import { mapZodErrorToFieldErrors } from './zod-error.mapper';
 
-type ValidationSchemas = {
-  body?: ZodType;
-  params?: ZodType<ParamsDictionary>;
-  query?: ZodType<Query>;
+type ValidationSchemas<
+  TParams extends ParamsDictionary = ParamsDictionary,
+  TBody = unknown,
+  TQuery = Query,
+> = {
+  body?: ZodType<TBody>;
+  params?: ZodType<TParams>;
+  query?: ZodType<TQuery>;
 };
 
-export function validate(schemas: ValidationSchemas): RequestHandler {
-  return (req, _res, next) => {
+export function validate<
+  TParams extends ParamsDictionary = ParamsDictionary,
+  TBody = unknown,
+  TQuery = Query,
+>(schemas: ValidationSchemas<TParams, TBody, TQuery>): RequestHandler<TParams, unknown, TBody, TQuery> {
+  return (req, res, next) => {
     if (schemas.body) {
       const result = schemas.body.safeParse(req.body);
 
@@ -40,7 +48,9 @@ export function validate(schemas: ValidationSchemas): RequestHandler {
         return next(new ValidationError(errors));
       }
 
-      req.query = result.data;
+      //req.query = result.data; // Can't assign to req.query, because it is a getter only
+      // todo - improve through additional property on req
+      res.locals.query = result.data;
     }
 
     next();
