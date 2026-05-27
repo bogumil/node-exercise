@@ -13,6 +13,14 @@ export const createOrganizationBodySchema = z.strictObject({
 
 export type CreateOrganizationBodyDto = z.infer<typeof createOrganizationBodySchema>;
 
+export const organizationResponseSchema = z.strictObject({
+  id: z.uuid(),
+  name: z.string(),
+  industry: z.string().nullable(),
+  dateFounded: z.string().nullable(),
+});
+export type OrganizationResponseDto = z.infer<typeof organizationResponseSchema>;
+
 export const organizationSortFields = ['name', 'industry'] as const;
 export const listOrganizationQuerySchema = createPaginationQuerySchema(organizationSortFields);
 export type ListOrganizationQueryDto = z.infer<typeof listOrganizationQuerySchema>;

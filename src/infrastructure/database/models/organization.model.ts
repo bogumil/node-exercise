@@ -16,8 +16,8 @@ export class OrganizationModel extends Model<
 > {
   declare id: CreationOptional<string>;
   declare name: string;
-  declare industry: string | null | undefined;
-  declare dateFounded: string | null | undefined; // in YYYY-MM-DD format
+  declare industry: CreationOptional<string>;
+  declare dateFounded: CreationOptional<string>; // in YYYY-MM-DD format
 
   declare users?: NonAttribute<UserModel[]>;
   declare orders?: NonAttribute<OrderModel[]>;

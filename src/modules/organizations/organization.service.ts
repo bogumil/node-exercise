@@ -1,8 +1,12 @@
 import { NotFoundError, ValidationError } from '../../shared/http-errors';
 import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination.types';
 import { organizationRepository } from './organization.repository';
-import type { CreateOrganizationBodyDto, ListOrganizationQueryDto } from './organization.schemas';
-import type { Organization, OrganizationResponseDto } from './organization.types';
+import type {
+  CreateOrganizationBodyDto,
+  ListOrganizationQueryDto,
+  OrganizationResponseDto,
+} from './organization.schemas';
+import type { Organization } from './organization.types';
 
 export const organizationService = {
   async create(dto: CreateOrganizationBodyDto): Promise<OrganizationResponseDto> {
