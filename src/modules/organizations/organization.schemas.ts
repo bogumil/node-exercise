@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createPaginationQuerySchema } from '../../shared/common.schema';
 
 export const createOrganizationBodySchema = z.strictObject({
   name: z
@@ -11,3 +12,7 @@ export const createOrganizationBodySchema = z.strictObject({
 });
 
 export type CreateOrganizationBodyDto = z.infer<typeof createOrganizationBodySchema>;
+
+export const organizationSortFields = ['name', 'industry'] as const;
+export const listOrganizationQuerySchema = createPaginationQuerySchema(organizationSortFields);
+export type ListOrganizationQueryDto = z.infer<typeof listOrganizationQuerySchema>;

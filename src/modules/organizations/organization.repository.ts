@@ -1,5 +1,6 @@
 import { OrganizationModel } from '../../infrastructure/database/models';
-import type { CreateOrganizationBodyDto } from './organization.schemas';
+import type { PaginatedResult } from '../../shared/pagination.types';
+import type { CreateOrganizationBodyDto, ListOrganizationQueryDto } from './organization.schemas';
 import type { Organization } from './organization.types';
 
 function toOrganization(model: OrganizationModel): Organization {
@@ -26,5 +27,23 @@ export const organizationRepository = {
     const deletedCount = await OrganizationModel.destroy({ where: { id } });
 
     return deletedCount > 0;
+  },
+
+  async findMany(query: ListOrganizationQueryDto): Promise<PaginatedResult<Organization>> {
+    const offset = (query.page - 1) * query.pageSize;
+
+    const result = await OrganizationModel.findAndCountAll({
+      limit: query.pageSize,
+      offset,
+      order:
+        query.sortBy && query.sortDirection
+          ? [[query.sortBy, query.sortDirection.toUpperCase()]]
+          : [['name', 'ASC']], // TODO - move to default consts
+    });
+
+    return {
+      items: result.rows.map(toOrganization),
+      totalItems: result.count,
+    };
   },
 };

@@ -1,6 +1,7 @@
 import { NotFoundError, ValidationError } from '../../shared/http-errors';
+import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination.types';
 import { organizationRepository } from './organization.repository';
-import type { CreateOrganizationBodyDto } from './organization.schemas';
+import type { CreateOrganizationBodyDto, ListOrganizationQueryDto } from './organization.schemas';
 import type { Organization, OrganizationResponseDto } from './organization.types';
 
 export const organizationService = {
@@ -22,6 +23,18 @@ export const organizationService = {
     }
 
     return toOrganizationResponseDto(organization);
+  },
+
+  async list(query: ListOrganizationQueryDto): Promise<PaginatedResponseDto<OrganizationResponseDto>> {
+    const result = await organizationRepository.findMany(query);
+
+    return toPaginatedResponseDto(
+      {
+        items: result.items.map(toOrganizationResponseDto),
+        totalItems: result.totalItems,
+      },
+      query,
+    );
   },
 };
 
