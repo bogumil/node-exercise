@@ -15,7 +15,7 @@ export class UserModel extends Model<InferAttributes<UserModel>, InferCreationAt
   declare organizationId: string;
   declare firstName: string;
   declare lastName: string;
-  declare email: string | null;
+  declare email: CreationOptional<string | null>;
   declare dateCreated: CreationOptional<Date>;
 
   declare organization?: NonAttribute<OrganizationModel>;
