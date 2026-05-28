@@ -99,6 +99,14 @@ export const orderService = {
 
     return updatedOrder;
   },
+
+  async deleteById(id: string): Promise<void> {
+    const deleted = await orderRepository.deleteById(id);
+
+    if (!deleted) {
+      throw new NotFoundError();
+    }
+  },
 };
 
 function validateOrderDate(orderDate: string | undefined) {

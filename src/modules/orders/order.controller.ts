@@ -25,3 +25,8 @@ export async function updateOrder(
   const order = await orderService.updateById(req.params.id, req.body);
   return res.status(200).json(order);
 }
+
+export async function deleteOrder(req: Request<UuidIdParamsSchema>, res: Response) {
+  await orderService.deleteById(req.params.id);
+  return res.status(204).send();
+}

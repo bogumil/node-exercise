@@ -98,6 +98,15 @@ export const orderRepository = {
 
     return toOrderWithRelations(order);
   },
+
+  async deleteById(id: string): Promise<boolean> {
+    const deletedCount = await OrderModel.destroy({
+      where: { id },
+      individualHooks: true,
+    });
+
+    return deletedCount > 0;
+  },
 };
 
 function toUpdateAttributes(dto: UpdateOrderBodyDto): OrderUpdateAttributes {

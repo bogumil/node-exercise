@@ -3,7 +3,7 @@ import { apiRoute } from '../../shared/http/api-route';
 import { jsonResponse } from '../../shared/http/json-response';
 import { errorResponseSchema } from '../../shared/schemas/error-response.schema';
 import { uuidIdParamsSchema } from '../../shared/schemas/id.schema';
-import { createOrder, getOrder, listOrders, updateOrder } from './order.controller';
+import { createOrder, deleteOrder, getOrder, listOrders, updateOrder } from './order.controller';
 import {
   createOrderBodySchema,
   listOrderQuerySchema,
@@ -86,5 +86,24 @@ orderRoutes.put(
       404: jsonResponse('Order not found', errorResponseSchema),
     },
     handler: updateOrder,
+  }),
+);
+
+orderRoutes.delete(
+  '/:id',
+  ...apiRoute({
+    method: 'delete',
+    path: '/api/orders/{id}',
+    tags: ['Orders'],
+    summary: 'Delete order by id',
+    schemas: {
+      params: uuidIdParamsSchema,
+    },
+    responses: {
+      204: { description: 'Order deleted' },
+      400: jsonResponse('Validation error', errorResponseSchema),
+      404: jsonResponse('Order not found', errorResponseSchema),
+    },
+    handler: deleteOrder,
   }),
 );
