@@ -17,6 +17,7 @@ jest.mock('./user.repository', () => ({
     findMany: jest.fn(),
     updateById: jest.fn(),
     deleteById: jest.fn(),
+    countDeleteBlockers: jest.fn(),
   },
 }));
 
@@ -39,6 +40,7 @@ describe('userService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    userRepo.countDeleteBlockers.mockResolvedValue({ orders: 0 });
     organizationRepo.findById.mockResolvedValue({
       id: organizationId,
       name: 'Acme',

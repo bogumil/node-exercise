@@ -10,6 +10,7 @@ jest.mock('./organization.repository', () => ({
     findMany: jest.fn(),
     updateById: jest.fn(),
     deleteById: jest.fn(),
+    countDeleteBlockers: jest.fn(),
   },
 }));
 
@@ -19,6 +20,7 @@ describe('organizationService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers().setSystemTime(new Date('2026-05-28T00:00:00Z'));
+    repo.countDeleteBlockers.mockResolvedValue({ users: 0, orders: 0 });
   });
 
   afterEach(() => {
