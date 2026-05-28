@@ -9,7 +9,7 @@ export function createPaginationQuerySchema<const TSortFields extends readonly [
       description: 'Page number to return.',
       example: 1,
     }),
-    pageSize: z.coerce.number().positive().max(100).default(5).openapi({
+    pageSize: z.coerce.number().int().positive().max(100).default(5).openapi({
       description: 'Maximum number of items to return on one page.',
       example: 5,
     }),
