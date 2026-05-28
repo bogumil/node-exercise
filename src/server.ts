@@ -1,3 +1,4 @@
+import './openapi/zod-extend';
 import { app } from './app';
 import envConfig from './config/env';
 import { connectInfrastructure } from './infrastructure';
