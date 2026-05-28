@@ -1,6 +1,7 @@
+import './openapi/zod-extend';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import swaggerUi from 'swagger-ui-express';
-import env from './config/env';
+import { healthRoutes } from './modules/health/health.routes';
 import { createOpenApiDocument } from './openapi/document';
 import { routes } from './routes';
 import { errorHandler } from './shared/errors/error-handler.middleware';
@@ -12,13 +13,7 @@ export const app = express();
 app.use(express.json());
 app.use(httpHeadersLogger);
 
-app.get('/health', (_req: Request, res: Response) => {
-  res.json({
-    status: 'OK',
-    environment: env.envName,
-  });
-});
-
+app.use(healthRoutes);
 app.use('/api', routes);
 
 const openApiDocument = createOpenApiDocument();
