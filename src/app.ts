@@ -5,10 +5,12 @@ import { createOpenApiDocument } from './openapi/document';
 import { routes } from './routes';
 import { errorHandler } from './shared/error-handler.middleware';
 import { NotFoundError } from './shared/http-errors';
+import { httpHeadersLogger } from './shared/middleware/http-headers-logger.middleware';
 
 export const app = express();
 
 app.use(express.json());
+app.use(httpHeadersLogger);
 
 app.get('/health', (_req: Request, res: Response) => {
   res.json({
