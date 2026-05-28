@@ -30,7 +30,7 @@ organizationRoutes.get(
     },
     responses: {
       200: jsonResponse('Paginated organizations list', paginatedOrganizationResponseSchema),
-      404: jsonResponse('Validation error', errorResponseSchema),
+      400: jsonResponse('Validation error', errorResponseSchema),
     },
     handler: listOrganizations,
   }),
@@ -48,6 +48,7 @@ organizationRoutes.get(
     },
     responses: {
       200: jsonResponse('Organization', organizationResponseSchema),
+      400: jsonResponse('Validation error', errorResponseSchema),
       404: jsonResponse('Organization not found', errorResponseSchema),
     },
     handler: getOrganization,
@@ -66,7 +67,7 @@ organizationRoutes.post(
     },
     responses: {
       201: jsonResponse('Created organization', organizationResponseSchema),
-      404: jsonResponse('Validation error', errorResponseSchema),
+      400: jsonResponse('Validation error', errorResponseSchema),
     },
     handler: createOrganization,
   }),
