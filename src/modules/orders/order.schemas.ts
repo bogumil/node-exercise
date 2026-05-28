@@ -18,7 +18,7 @@ export const createOrderBodySchema = z
   .strictObject({
     organizationId: z.uuidv4('Invalid organization id'),
     userId: z.uuidv4('Invalid user id'),
-    totalAmount: moneyAmountSchema,
+    totalAmount: moneyAmountSchema.gt(0),
     orderDate: z.iso.datetime('Order date must be a valid ISO datetime'),
   })
   .openapi('CreateOrderRequest');
@@ -59,7 +59,7 @@ export const updateOrderBodySchema = z
   .strictObject({
     organizationId: z.uuidv4('Invalid organization id').optional(),
     userId: z.uuidv4('Invalid user id').optional(),
-    totalAmount: moneyAmountSchema.optional(),
+    totalAmount: moneyAmountSchema.gt(0).optional(),
     orderDate: z.iso.datetime('Order date must be a valid ISO datetime').optional(),
   })
   .refine((body) => Object.keys(body).length > 0, {

@@ -15,6 +15,7 @@ import type { Order } from './order.types';
 export const orderService = {
   async create(dto: CreateOrderBodyDto): Promise<OrderResponseDto> {
     validateOrderDate(dto.orderDate);
+    validateCreateTotalAmount(dto.totalAmount);
 
     const [organization, user] = await Promise.all([
       organizationRepository.findById(dto.organizationId),
@@ -62,6 +63,7 @@ export const orderService = {
 
   async updateById(id: string, dto: UpdateOrderBodyDto): Promise<OrderResponseDto> {
     validateOrderDate(dto.orderDate);
+    validateCreateTotalAmount(dto.totalAmount);
 
     const existingOrder = await orderRepository.findById(id);
 
@@ -113,6 +115,14 @@ function validateOrderDate(orderDate: string | undefined) {
   if (orderDate !== undefined && new Date(orderDate).getTime() > Date.now()) {
     throw new ValidationError({
       orderDate: ['Order date cannot be later than the current timestamp'],
+    });
+  }
+}
+
+function validateCreateTotalAmount(totalAmount: number | undefined) {
+  if (totalAmount !== undefined && totalAmount <= 0) {
+    throw new ValidationError({
+      totalAmount: ['Total amount has to be greater than 0'],
     });
   }
 }
