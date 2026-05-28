@@ -1,11 +1,24 @@
 import { Sequelize } from 'sequelize';
 
 import envConfig from '../../config/env';
+import { logger } from '../../config/logger';
 
 export const sequelize = new Sequelize(envConfig.db.database, envConfig.db.user, envConfig.db.password, {
   host: envConfig.db.host,
   port: envConfig.db.port,
   dialect: envConfig.db.dialect,
+  benchmark: true,
+  logging: envConfig.sqlLogging
+    ? (sql, durationMs) => {
+        logger.debug(
+          {
+            sql,
+            ...(typeof durationMs === 'number' ? { durationMs } : {}),
+          },
+          'SQL query',
+        );
+      }
+    : false,
   pool: {
     max: 5,
     min: 0,

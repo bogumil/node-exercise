@@ -11,6 +11,7 @@ const envConfig = {
   envName: process.env.ENV_NAME || 'development',
   port: parseInt(process.env.PORT || '3000', 10),
   logLevel: process.env.LOG_LEVEL || 'info',
+  sqlLogging: process.env.SQL_LOGGING === 'true',
 };
 
 export default envConfig;
