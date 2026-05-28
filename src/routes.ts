@@ -7,4 +7,4 @@ export const routes = Router();
 
 routes.use('/organizations', organizationRoutes);
 routes.use('/users', userRoutes);
-routes.use('/order', orderRoutes);
+routes.use('/orders', orderRoutes);
