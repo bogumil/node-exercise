@@ -1,6 +1,10 @@
 import type { Request, Response } from 'express';
 import type { UuidIdParamsSchema } from '../../shared/schemas/id.schema';
-import type { CreateOrganizationBodyDto, ListOrganizationQueryDto } from './organization.schemas';
+import type {
+  CreateOrganizationBodyDto,
+  ListOrganizationQueryDto,
+  UpdateOrganizationBodyDto,
+} from './organization.schemas';
 import { organizationService } from './organization.service';
 
 export async function createOrganization(
@@ -22,6 +26,14 @@ export async function listOrganizations(
 ) {
   const result = await organizationService.list(res.locals.query);
   return res.status(200).json(result);
+}
+
+export async function updateOrganization(
+  req: Request<UuidIdParamsSchema, unknown, UpdateOrganizationBodyDto>,
+  res: Response,
+) {
+  const organization = await organizationService.updateById(req.params.id, req.body);
+  return res.status(200).json(organization);
 }
 
 export async function deleteOrganization(req: Request<UuidIdParamsSchema>, res: Response) {

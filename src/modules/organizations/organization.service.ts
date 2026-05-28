@@ -5,14 +5,13 @@ import type {
   CreateOrganizationBodyDto,
   ListOrganizationQueryDto,
   OrganizationResponseDto,
+  UpdateOrganizationBodyDto,
 } from './organization.schemas';
 import type { Organization } from './organization.types';
 
 export const organizationService = {
   async create(dto: CreateOrganizationBodyDto): Promise<OrganizationResponseDto> {
-    if (dto.dateFounded && new Date(dto.dateFounded).getTime() > Date.now()) {
-      throw new ValidationError({ dateFounded: ['Date founded has to be before the current timestamp'] });
-    }
+    validateDateFounded(dto.dateFounded);
 
     const organization = await organizationRepository.create(dto);
 
@@ -41,6 +40,18 @@ export const organizationService = {
     );
   },
 
+  async updateById(id: string, dto: UpdateOrganizationBodyDto): Promise<OrganizationResponseDto> {
+    validateDateFounded(dto.dateFounded);
+
+    const organization = await organizationRepository.updateById(id, dto);
+
+    if (!organization) {
+      throw new NotFoundError();
+    }
+
+    return toOrganizationResponseDto(organization);
+  },
+
   async deleteById(id: string): Promise<void> {
     const deleted = await organizationRepository.deleteById(id);
 
@@ -49,6 +60,14 @@ export const organizationService = {
     }
   },
 };
+
+function validateDateFounded(dateFounded: string | undefined | null) {
+  if (dateFounded !== undefined && dateFounded !== null && new Date(dateFounded).getTime() > Date.now()) {
+    throw new ValidationError({
+      dateFounded: ['Date founded has to be before the current timestamp'],
+    });
+  }
+}
 
 function toOrganizationResponseDto(organization: Organization): OrganizationResponseDto {
   return {

@@ -1,6 +1,10 @@
 import { OrganizationModel } from '../../infrastructure/database/models';
 import type { PaginatedResult } from '../../shared/pagination/pagination.types';
-import type { CreateOrganizationBodyDto, ListOrganizationQueryDto } from './organization.schemas';
+import type {
+  CreateOrganizationBodyDto,
+  ListOrganizationQueryDto,
+  UpdateOrganizationBodyDto,
+} from './organization.schemas';
 import type { Organization } from './organization.types';
 
 function toOrganization(model: OrganizationModel): Organization {
@@ -11,6 +15,12 @@ function toOrganization(model: OrganizationModel): Organization {
     dateFounded: model.dateFounded,
   };
 }
+
+type OrganizationUpdateAttributes = {
+  name?: string;
+  industry?: string | null;
+  dateFounded?: string | null;
+};
 
 export const organizationRepository = {
   async create(dto: CreateOrganizationBodyDto): Promise<Organization> {
@@ -27,6 +37,18 @@ export const organizationRepository = {
     const deletedCount = await OrganizationModel.destroy({ where: { id }, individualHooks: true });
 
     return deletedCount > 0;
+  },
+
+  async updateById(id: string, dto: UpdateOrganizationBodyDto): Promise<Organization | null> {
+    const organization = await OrganizationModel.findByPk(id);
+
+    if (!organization) {
+      return null;
+    }
+
+    await organization.update(toUpdateAttributes(dto));
+
+    return toOrganization(organization);
   },
 
   async findMany(query: ListOrganizationQueryDto): Promise<PaginatedResult<Organization>> {
@@ -47,3 +69,21 @@ export const organizationRepository = {
     };
   },
 };
+
+function toUpdateAttributes(dto: UpdateOrganizationBodyDto): OrganizationUpdateAttributes {
+  const update: OrganizationUpdateAttributes = {};
+
+  if (dto.name !== undefined) {
+    update.name = dto.name;
+  }
+
+  if (dto.industry !== undefined) {
+    update.industry = dto.industry;
+  }
+
+  if (dto.dateFounded !== undefined) {
+    update.dateFounded = dto.dateFounded;
+  }
+
+  return update;
+}

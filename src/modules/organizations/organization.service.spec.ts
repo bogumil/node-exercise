@@ -8,6 +8,7 @@ jest.mock('./organization.repository', () => ({
     create: jest.fn(),
     findById: jest.fn(),
     findMany: jest.fn(),
+    updateById: jest.fn(),
     deleteById: jest.fn(),
   },
 }));
@@ -50,5 +51,71 @@ describe('organizationService', () => {
     repo.deleteById.mockResolvedValue(false);
 
     await expect(organizationService.deleteById('missing-id')).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it('updates organization with provided fields only', async () => {
+    repo.updateById.mockResolvedValue({
+      id: 'organization-id',
+      name: 'Updated Org',
+      industry: 'Logistics',
+      dateFounded: null,
+    });
+
+    await expect(organizationService.updateById('organization-id', { name: 'Updated Org' })).resolves.toEqual(
+      {
+        id: 'organization-id',
+        name: 'Updated Org',
+        industry: 'Logistics',
+        dateFounded: null,
+      },
+    );
+
+    expect(repo.updateById).toHaveBeenCalledWith('organization-id', {
+      name: 'Updated Org',
+    });
+  });
+
+  it('allows clearing nullable fields', async () => {
+    repo.updateById.mockResolvedValue({
+      id: 'organization-id',
+      name: 'Org',
+      industry: null,
+      dateFounded: null,
+    });
+
+    await expect(
+      organizationService.updateById('organization-id', {
+        industry: null,
+        dateFounded: null,
+      }),
+    ).resolves.toEqual({
+      id: 'organization-id',
+      name: 'Org',
+      industry: null,
+      dateFounded: null,
+    });
+
+    expect(repo.updateById).toHaveBeenCalledWith('organization-id', {
+      industry: null,
+      dateFounded: null,
+    });
+  });
+
+  it('throws NotFoundError when updating missing organization', async () => {
+    repo.updateById.mockResolvedValue(null);
+
+    await expect(
+      organizationService.updateById('missing-id', { name: 'Missing Org' }),
+    ).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it('rejects future dateFounded when updating', async () => {
+    await expect(
+      organizationService.updateById('organization-id', {
+        dateFounded: '2026-05-29',
+      }),
+    ).rejects.toBeInstanceOf(ValidationError);
+
+    expect(repo.updateById).not.toHaveBeenCalled();
   });
 });

@@ -8,12 +8,14 @@ import {
   deleteOrganization,
   getOrganization,
   listOrganizations,
+  updateOrganization,
 } from './organization.controller';
 import {
   createOrganizationBodySchema,
   listOrganizationQuerySchema,
   organizationResponseSchema,
   paginatedOrganizationResponseSchema,
+  updateOrganizationBodySchema,
 } from './organization.schemas';
 
 export const organizationRoutes = Router();
@@ -73,7 +75,25 @@ organizationRoutes.post(
   }),
 );
 
-//organizationRoutes.put('/:id');
+organizationRoutes.put(
+  '/:id',
+  ...apiRoute({
+    method: 'put',
+    path: '/api/organizations/{id}',
+    tags: ['Organizations'],
+    summary: 'Update organization by id',
+    schemas: {
+      params: uuidIdParamsSchema,
+      body: updateOrganizationBodySchema,
+    },
+    responses: {
+      200: jsonResponse('Updated organization', organizationResponseSchema),
+      400: jsonResponse('Validation error', errorResponseSchema),
+      404: jsonResponse('Organization not found', errorResponseSchema),
+    },
+    handler: updateOrganization,
+  }),
+);
 
 organizationRoutes.delete(
   '/:id',
