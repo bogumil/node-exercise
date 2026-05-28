@@ -2,8 +2,13 @@ import { Router } from 'express';
 import { apiRoute } from '../../shared/http/api-route';
 import { jsonResponse } from '../../shared/http/json-response';
 import { errorResponseSchema } from '../../shared/schemas/error-response.schema';
-import { createOrder } from './order.controller';
-import { createOrderBodySchema, orderResponseSchema } from './order.schemas';
+import { createOrder, listOrders } from './order.controller';
+import {
+  createOrderBodySchema,
+  listOrderQuerySchema,
+  orderResponseSchema,
+  paginatedOrderResponseSchema,
+} from './order.schemas';
 
 export const orderRoutes = Router();
 
@@ -22,5 +27,23 @@ orderRoutes.post(
       400: jsonResponse('Validation error', errorResponseSchema),
     },
     handler: createOrder,
+  }),
+);
+
+orderRoutes.get(
+  '/',
+  ...apiRoute({
+    method: 'get',
+    path: '/api/orders',
+    tags: ['Orders'],
+    summary: 'Get orders list',
+    schemas: {
+      query: listOrderQuerySchema,
+    },
+    responses: {
+      200: jsonResponse('Paginated orders list', paginatedOrderResponseSchema),
+      400: jsonResponse('Validation error', errorResponseSchema),
+    },
+    handler: listOrders,
   }),
 );
