@@ -1,5 +1,5 @@
 import type { ErrorRequestHandler } from 'express';
-import type { ErrorResponseDto } from './error-response.dto';
+import type { ErrorResponseDto } from './common.schema';
 import { AppError } from './http-errors';
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
