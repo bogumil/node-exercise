@@ -1,15 +1,6 @@
 import { z } from 'zod';
 import { SORT_DIRECTIONS } from './pagination.types';
 
-export const uuidIdParamsSchema = z.strictObject({
-  id: z.uuidv4('Invalid id').openapi({
-    example: '8b7f7f10-4f9f-4b4e-b5f7-1f8c2a19b111',
-    description: 'Resource id',
-  }),
-});
-
-export type UuidIdParamsSchema = z.infer<typeof uuidIdParamsSchema>;
-
 export function createPaginationQuerySchema<const TSortFields extends readonly [string, ...string[]]>(
   sortableFields: TSortFields,
 ) {
@@ -49,21 +40,3 @@ export function createPaginationResponseSchema<T extends z.ZodType>(name: string
     })
     .openapi(name);
 }
-
-export const errorResponseSchema = z
-  .strictObject({
-    status: z.number(),
-    message: z.string(),
-    errors: z.record(z.string(), z.array(z.string())).optional(),
-  })
-  .openapi('ErrorResponse', {
-    example: {
-      status: 400,
-      message: 'Validation error',
-      errors: {
-        id: ['Invalid id'],
-        name: ['Invalid name'],
-      },
-    },
-  });
-export type ErrorResponseDto = z.infer<typeof errorResponseSchema>;

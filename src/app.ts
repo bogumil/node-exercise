@@ -3,9 +3,9 @@ import swaggerUi from 'swagger-ui-express';
 import env from './config/env';
 import { createOpenApiDocument } from './openapi/document';
 import { routes } from './routes';
-import { errorHandler } from './shared/error-handler.middleware';
-import { NotFoundError } from './shared/http-errors';
-import { httpHeadersLogger } from './shared/middleware/http-headers-logger.middleware';
+import { errorHandler } from './shared/errors/error-handler.middleware';
+import { NotFoundError } from './shared/errors/http-errors';
+import { httpHeadersLogger } from './shared/http/http-headers-logger.middleware';
 
 export const app = express();
 

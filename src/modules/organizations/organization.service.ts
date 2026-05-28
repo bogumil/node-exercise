@@ -1,5 +1,5 @@
-import { NotFoundError, ValidationError } from '../../shared/http-errors';
-import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination.types';
+import { NotFoundError, ValidationError } from '../../shared/errors/http-errors';
+import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination/pagination.types';
 import { organizationRepository } from './organization.repository';
 import type {
   CreateOrganizationBodyDto,

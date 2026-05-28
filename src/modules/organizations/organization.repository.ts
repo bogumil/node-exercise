@@ -1,5 +1,5 @@
 import { OrganizationModel } from '../../infrastructure/database/models';
-import type { PaginatedResult } from '../../shared/pagination.types';
+import type { PaginatedResult } from '../../shared/pagination/pagination.types';
 import type { CreateOrganizationBodyDto, ListOrganizationQueryDto } from './organization.schemas';
 import type { Organization } from './organization.types';
 
@@ -24,7 +24,7 @@ export const organizationRepository = {
   },
 
   async deleteById(id: string): Promise<boolean> {
-    const deletedCount = await OrganizationModel.destroy({ where: { id } });
+    const deletedCount = await OrganizationModel.destroy({ where: { id }, individualHooks: true });
 
     return deletedCount > 0;
   },

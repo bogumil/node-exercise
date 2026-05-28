@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { apiRoute } from '../../shared/api-route';
-import { errorResponseSchema, uuidIdParamsSchema } from '../../shared/common.schema';
-import { jsonResponse } from '../../shared/json-response';
+import { apiRoute } from '../../shared/http/api-route';
+import { jsonResponse } from '../../shared/http/json-response';
+import { errorResponseSchema } from '../../shared/schemas/error-response.schema';
+import { uuidIdParamsSchema } from '../../shared/schemas/id.schema';
 import { createOrganization, getOrganization, listOrganizations } from './organization.controller';
 import {
   createOrganizationBodySchema,

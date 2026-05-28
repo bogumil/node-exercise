@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { UuidIdParamsSchema } from '../../shared/common.schema';
+import type { UuidIdParamsSchema } from '../../shared/schemas/id.schema';
 import type { CreateOrganizationBodyDto, ListOrganizationQueryDto } from './organization.schemas';
 import { organizationService } from './organization.service';
 

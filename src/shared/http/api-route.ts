@@ -2,8 +2,8 @@ import type { RouteConfig } from '@asteasolutions/zod-to-openapi';
 import type { RequestHandler } from 'express';
 import type { ParamsDictionary, Query } from 'express-serve-static-core';
 import type { ZodType } from 'zod';
-import { openApiRegistry } from '../openapi/registry';
-import { validate } from './validate-request.middleware';
+import { openApiRegistry } from '../../openapi/registry';
+import { validate } from '../validation/validate-request.middleware';
 
 type RouteRequest = NonNullable<RouteConfig['request']>;
 type OpenApiParameterSchema = NonNullable<RouteRequest['params']>;

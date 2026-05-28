@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { createPaginationQuerySchema, createPaginationResponseSchema } from '../../shared/common.schema';
+import {
+  createPaginationQuerySchema,
+  createPaginationResponseSchema,
+} from '../../shared/pagination/pagination.schema';
 
 export const createOrganizationBodySchema = z
   .strictObject({

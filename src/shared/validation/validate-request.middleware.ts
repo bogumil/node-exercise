@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import type { ParamsDictionary, Query } from 'express-serve-static-core';
 import type { ZodType } from 'zod';
-import { ValidationError } from './http-errors';
+import { ValidationError } from '../errors/http-errors';
 import { mapZodErrorToFieldErrors } from './zod-error.mapper';
 
 type ValidationSchemas<
