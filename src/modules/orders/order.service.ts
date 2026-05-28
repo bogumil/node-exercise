@@ -1,4 +1,4 @@
-import { ValidationError } from '../../shared/errors/http-errors';
+import { NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination/pagination.types';
 import { organizationRepository } from '../organizations/organization.repository';
 import { userRepository } from '../users/user.repository';
@@ -45,6 +45,16 @@ export const orderService = {
       },
       query,
     );
+  },
+
+  async findById(id: string): Promise<OrderResponseDto> {
+    const order = await orderRepository.findById(id);
+
+    if (!order) {
+      throw new NotFoundError();
+    }
+
+    return order;
   },
 };
 

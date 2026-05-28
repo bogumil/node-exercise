@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { apiRoute } from '../../shared/http/api-route';
 import { jsonResponse } from '../../shared/http/json-response';
 import { errorResponseSchema } from '../../shared/schemas/error-response.schema';
-import { createOrder, listOrders } from './order.controller';
+import { uuidIdParamsSchema } from '../../shared/schemas/id.schema';
+import { createOrder, getOrder, listOrders } from './order.controller';
 import {
   createOrderBodySchema,
   listOrderQuerySchema,
@@ -45,5 +46,24 @@ orderRoutes.get(
       400: jsonResponse('Validation error', errorResponseSchema),
     },
     handler: listOrders,
+  }),
+);
+
+orderRoutes.get(
+  '/:id',
+  ...apiRoute({
+    method: 'get',
+    path: '/api/orders/{id}',
+    tags: ['Orders'],
+    summary: 'Get order by id',
+    schemas: {
+      params: uuidIdParamsSchema,
+    },
+    responses: {
+      200: jsonResponse('Order', orderResponseSchema),
+      400: jsonResponse('Validation error', errorResponseSchema),
+      404: jsonResponse('Order not found', errorResponseSchema),
+    },
+    handler: getOrder,
   }),
 );
