@@ -21,7 +21,7 @@ export class ValidationError extends AppError {
     super({
       status: 400,
       message,
-      errors,
+      ...(errors ? { errors } : {}),
     });
   }
 }
@@ -31,6 +31,16 @@ export class NotFoundError extends AppError {
     super({
       status: 404,
       message,
+    });
+  }
+}
+
+export class ConflictError extends AppError {
+  constructor(message = 'Conflict', errors?: Record<string, string[]>) {
+    super({
+      status: 409,
+      message,
+      ...(errors ? { errors } : {}),
     });
   }
 }

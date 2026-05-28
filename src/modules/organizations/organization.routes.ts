@@ -109,6 +109,7 @@ organizationRoutes.delete(
       204: { description: 'Organization deleted' },
       400: jsonResponse('Validation error', errorResponseSchema),
       404: jsonResponse('Organization not found', errorResponseSchema),
+      409: jsonResponse('Organization is referenced by orders or users', errorResponseSchema),
     },
     handler: deleteOrganization,
   }),

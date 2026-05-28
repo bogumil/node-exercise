@@ -1,4 +1,4 @@
-import { NotFoundError, ValidationError } from '../../shared/errors/http-errors';
+import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination/pagination.types';
 import { organizationRepository } from '../organizations/organization.repository';
 import { userRepository } from './user.repository';
@@ -50,6 +50,16 @@ export const userService = {
   },
 
   async deleteById(id: string): Promise<void> {
+    const blockers = await userRepository.countDeleteBlockers(id);
+
+    if (blockers.orders > 0) {
+      throw new ConflictError('User cannot be deleted because they are still referenced by orders', {
+        id: [
+          `User has ${blockers.orders} order(s). Delete or reassign those orders before deleting the user.`,
+        ],
+      });
+    }
+
     const deleted = await userRepository.deleteById(id);
 
     if (!deleted) {

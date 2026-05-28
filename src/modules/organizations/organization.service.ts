@@ -1,4 +1,4 @@
-import { NotFoundError, ValidationError } from '../../shared/errors/http-errors';
+import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination/pagination.types';
 import { organizationRepository } from './organization.repository';
 import type {
@@ -53,6 +53,19 @@ export const organizationService = {
   },
 
   async deleteById(id: string): Promise<void> {
+    const blockers = await organizationRepository.countDeleteBlockers(id);
+
+    if (blockers.users > 0 || blockers.orders > 0) {
+      throw new ConflictError(
+        'Organization cannot be deleted because it is still referenced by other records',
+        {
+          id: [
+            `Organization has ${blockers.users} user(s) and ${blockers.orders} order(s). Delete or reassign them before deleting the organization.`,
+          ],
+        },
+      );
+    }
+
     const deleted = await organizationRepository.deleteById(id);
 
     if (!deleted) {

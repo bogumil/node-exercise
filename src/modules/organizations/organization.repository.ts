@@ -1,4 +1,4 @@
-import { OrganizationModel } from '../../infrastructure/database/models';
+import { OrderModel, OrganizationModel, UserModel } from '../../infrastructure/database/models';
 import type { PaginatedResult } from '../../shared/pagination/pagination.types';
 import type {
   CreateOrganizationBodyDto,
@@ -67,6 +67,15 @@ export const organizationRepository = {
       items: result.rows.map(toOrganization),
       totalItems: result.count,
     };
+  },
+
+  async countDeleteBlockers(id: string): Promise<{ users: number; orders: number }> {
+    const [users, orders] = await Promise.all([
+      UserModel.count({ where: { organizationId: id } }),
+      OrderModel.count({ where: { organizationId: id } }),
+    ]);
+
+    return { users, orders };
   },
 };
 

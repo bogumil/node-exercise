@@ -1,4 +1,4 @@
-import { UserModel } from '../../infrastructure/database/models';
+import { OrderModel, UserModel } from '../../infrastructure/database/models';
 import type { PaginatedResult } from '../../shared/pagination/pagination.types';
 import type { CreateUserBodyDto, ListUserQueryDto, UpdateUserBodyDto } from './user.schemas';
 import type { User } from './user.types';
@@ -66,6 +66,12 @@ export const userRepository = {
       items: result.rows.map(toUser),
       totalItems: result.count,
     };
+  },
+
+  async countDeleteBlockers(id: string): Promise<{ orders: number }> {
+    const orders = await OrderModel.count({ where: { userId: id } });
+
+    return { orders };
   },
 };
 

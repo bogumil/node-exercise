@@ -103,6 +103,7 @@ userRoutes.delete(
       204: { description: 'User deleted' },
       400: jsonResponse('Validation error', errorResponseSchema),
       404: jsonResponse('User not found', errorResponseSchema),
+      409: jsonResponse('User is referenced by orders', errorResponseSchema),
     },
     handler: deleteUser,
   }),
