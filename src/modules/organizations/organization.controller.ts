@@ -23,3 +23,8 @@ export async function listOrganizations(
   const result = await organizationService.list(res.locals.query);
   return res.status(200).json(result);
 }
+
+export async function deleteOrganization(req: Request<UuidIdParamsSchema>, res: Response) {
+  await organizationService.deleteById(req.params.id);
+  return res.status(204).send();
+}

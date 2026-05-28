@@ -40,6 +40,14 @@ export const organizationService = {
       query,
     );
   },
+
+  async deleteById(id: string): Promise<void> {
+    const deleted = await organizationRepository.deleteById(id);
+
+    if (!deleted) {
+      throw new NotFoundError();
+    }
+  },
 };
 
 function toOrganizationResponseDto(organization: Organization): OrganizationResponseDto {

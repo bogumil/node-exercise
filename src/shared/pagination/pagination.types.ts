@@ -17,7 +17,7 @@ export type PaginatedResult<T> = {
 export type PaginatedResponseDto<T> = {
   data: T[];
   meta: {
-    currPage: number;
+    currentPage: number;
     itemsOnPage: number;
     pageSize: number;
     totalItems: number;
@@ -36,7 +36,7 @@ export function toPaginatedResponseDto<T>(
   return {
     data: result.items,
     meta: {
-      currPage: query.page,
+      currentPage: query.page,
       itemsOnPage: result.items.length,
       pageSize: query.pageSize,
       totalItems: result.totalItems,

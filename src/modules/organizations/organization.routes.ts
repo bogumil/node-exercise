@@ -3,7 +3,12 @@ import { apiRoute } from '../../shared/http/api-route';
 import { jsonResponse } from '../../shared/http/json-response';
 import { errorResponseSchema } from '../../shared/schemas/error-response.schema';
 import { uuidIdParamsSchema } from '../../shared/schemas/id.schema';
-import { createOrganization, getOrganization, listOrganizations } from './organization.controller';
+import {
+  createOrganization,
+  deleteOrganization,
+  getOrganization,
+  listOrganizations,
+} from './organization.controller';
 import {
   createOrganizationBodySchema,
   listOrganizationQuerySchema,
@@ -31,6 +36,24 @@ organizationRoutes.get(
   }),
 );
 
+organizationRoutes.get(
+  '/:id',
+  ...apiRoute({
+    method: 'get',
+    path: '/api/organizations/{id}',
+    tags: ['Organizations'],
+    summary: 'Get organization by id',
+    schemas: {
+      params: uuidIdParamsSchema,
+    },
+    responses: {
+      200: jsonResponse('Organization', organizationResponseSchema),
+      404: jsonResponse('Organization not found', errorResponseSchema),
+    },
+    handler: getOrganization,
+  }),
+);
+
 organizationRoutes.post(
   '/',
   ...apiRoute({
@@ -49,20 +72,23 @@ organizationRoutes.post(
   }),
 );
 
-organizationRoutes.get(
+//organizationRoutes.put('/:id');
+
+organizationRoutes.delete(
   '/:id',
   ...apiRoute({
-    method: 'get',
+    method: 'delete',
     path: '/api/organizations/{id}',
     tags: ['Organizations'],
-    summary: 'Get organization by id',
+    summary: 'Delete organization by id',
     schemas: {
       params: uuidIdParamsSchema,
     },
     responses: {
-      200: jsonResponse('Organization', organizationResponseSchema),
+      204: { description: 'Organization deleted' },
+      400: jsonResponse('Validation error', errorResponseSchema),
       404: jsonResponse('Organization not found', errorResponseSchema),
     },
-    handler: getOrganization,
+    handler: deleteOrganization,
   }),
 );

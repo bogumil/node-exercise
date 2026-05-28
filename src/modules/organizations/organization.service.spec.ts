@@ -8,6 +8,7 @@ jest.mock('./organization.repository', () => ({
     create: jest.fn(),
     findById: jest.fn(),
     findMany: jest.fn(),
+    deleteById: jest.fn(),
   },
 }));
 
@@ -35,5 +36,19 @@ describe('organizationService', () => {
     repo.findById.mockResolvedValue(null);
 
     await expect(organizationService.findById('missing-id')).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it('deletes organization when it exists', async () => {
+    repo.deleteById.mockResolvedValue(true);
+
+    await expect(organizationService.deleteById('organization-id')).resolves.toBeUndefined();
+
+    expect(repo.deleteById).toHaveBeenCalledWith('organization-id');
+  });
+
+  it('throws NotFoundError when deleting missing organization', async () => {
+    repo.deleteById.mockResolvedValue(false);
+
+    await expect(organizationService.deleteById('missing-id')).rejects.toBeInstanceOf(NotFoundError);
   });
 });
