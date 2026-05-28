@@ -8,11 +8,14 @@ import type {
   ListOrderQueryDto,
   OrderListItemResponseDto,
   OrderResponseDto,
+  UpdateOrderBodyDto,
 } from './order.schemas';
 import type { Order } from './order.types';
 
 export const orderService = {
   async create(dto: CreateOrderBodyDto): Promise<OrderResponseDto> {
+    validateOrderDate(dto.orderDate);
+
     const [organization, user] = await Promise.all([
       organizationRepository.findById(dto.organizationId),
       userRepository.findById(dto.userId),
@@ -56,7 +59,55 @@ export const orderService = {
 
     return order;
   },
+
+  async updateById(id: string, dto: UpdateOrderBodyDto): Promise<OrderResponseDto> {
+    validateOrderDate(dto.orderDate);
+
+    const existingOrder = await orderRepository.findById(id);
+
+    if (!existingOrder) {
+      throw new NotFoundError();
+    }
+
+    const organizationId = dto.organizationId ?? existingOrder.organization.id;
+    const userId = dto.userId ?? existingOrder.user.id;
+
+    const [organization, user] = await Promise.all([
+      organizationRepository.findById(organizationId),
+      userRepository.findById(userId),
+    ]);
+
+    if (!organization) {
+      throw new ValidationError({ organizationId: ['Organization does not exist'] });
+    }
+
+    if (!user) {
+      throw new ValidationError({ userId: ['User does not exist'] });
+    }
+
+    if (user.organizationId !== organizationId) {
+      throw new ValidationError({
+        userId: ['User does not belong to the selected organization'],
+      });
+    }
+
+    const updatedOrder = await orderRepository.updateById(id, dto);
+
+    if (!updatedOrder) {
+      throw new NotFoundError();
+    }
+
+    return updatedOrder;
+  },
 };
+
+function validateOrderDate(orderDate: string | undefined) {
+  if (orderDate !== undefined && new Date(orderDate).getTime() > Date.now()) {
+    throw new ValidationError({
+      orderDate: ['Order date cannot be later than the current timestamp'],
+    });
+  }
+}
 
 function toOrderListItemResponseDto(order: Order): OrderListItemResponseDto {
   return {

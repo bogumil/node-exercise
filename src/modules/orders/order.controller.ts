@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { UuidIdParamsSchema } from '../../shared/schemas/id.schema';
-import type { CreateOrderBodyDto, ListOrderQueryDto } from './order.schemas';
+import type { CreateOrderBodyDto, ListOrderQueryDto, UpdateOrderBodyDto } from './order.schemas';
 import { orderService } from './order.service';
 
 export async function createOrder(req: Request<unknown, unknown, CreateOrderBodyDto>, res: Response) {
@@ -15,5 +15,13 @@ export async function listOrders(_req: Request<unknown, unknown, unknown, ListOr
 
 export async function getOrder(req: Request<UuidIdParamsSchema>, res: Response) {
   const order = await orderService.findById(req.params.id);
+  return res.status(200).json(order);
+}
+
+export async function updateOrder(
+  req: Request<UuidIdParamsSchema, unknown, UpdateOrderBodyDto>,
+  res: Response,
+) {
+  const order = await orderService.updateById(req.params.id, req.body);
   return res.status(200).json(order);
 }

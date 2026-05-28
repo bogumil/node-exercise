@@ -1,6 +1,6 @@
 import { OrderModel, OrganizationModel, UserModel } from '../../infrastructure/database/models';
 import type { PaginatedResult } from '../../shared/pagination/pagination.types';
-import type { CreateOrderBodyDto, ListOrderQueryDto } from './order.schemas';
+import type { CreateOrderBodyDto, ListOrderQueryDto, UpdateOrderBodyDto } from './order.schemas';
 import type { Order, OrderWithRelations } from './order.types';
 
 function toOrder(model: OrderModel): Order {
@@ -38,6 +38,13 @@ function toOrderWithRelations(model: OrderModel): OrderWithRelations {
     },
   };
 }
+
+type OrderUpdateAttributes = {
+  organizationId?: string;
+  userId?: string;
+  totalAmount?: number;
+  orderDate?: Date;
+};
 
 const orderDetailsInclude = [
   { model: UserModel, as: 'user', required: true },
@@ -78,4 +85,39 @@ export const orderRepository = {
 
     return order ? toOrderWithRelations(order) : null;
   },
+
+  async updateById(id: string, dto: UpdateOrderBodyDto): Promise<OrderWithRelations | null> {
+    const order = await OrderModel.findByPk(id);
+
+    if (!order) {
+      return null;
+    }
+
+    await order.update(toUpdateAttributes(dto));
+    await order.reload({ include: orderDetailsInclude });
+
+    return toOrderWithRelations(order);
+  },
 };
+
+function toUpdateAttributes(dto: UpdateOrderBodyDto): OrderUpdateAttributes {
+  const update: OrderUpdateAttributes = {};
+
+  if (dto.organizationId !== undefined) {
+    update.organizationId = dto.organizationId;
+  }
+
+  if (dto.userId !== undefined) {
+    update.userId = dto.userId;
+  }
+
+  if (dto.totalAmount !== undefined) {
+    update.totalAmount = dto.totalAmount;
+  }
+
+  if (dto.orderDate !== undefined) {
+    update.orderDate = new Date(dto.orderDate);
+  }
+
+  return update;
+}

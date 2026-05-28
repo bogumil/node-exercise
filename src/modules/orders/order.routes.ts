@@ -3,12 +3,13 @@ import { apiRoute } from '../../shared/http/api-route';
 import { jsonResponse } from '../../shared/http/json-response';
 import { errorResponseSchema } from '../../shared/schemas/error-response.schema';
 import { uuidIdParamsSchema } from '../../shared/schemas/id.schema';
-import { createOrder, getOrder, listOrders } from './order.controller';
+import { createOrder, getOrder, listOrders, updateOrder } from './order.controller';
 import {
   createOrderBodySchema,
   listOrderQuerySchema,
   orderResponseSchema,
   paginatedOrderResponseSchema,
+  updateOrderBodySchema,
 } from './order.schemas';
 
 export const orderRoutes = Router();
@@ -65,5 +66,25 @@ orderRoutes.get(
       404: jsonResponse('Order not found', errorResponseSchema),
     },
     handler: getOrder,
+  }),
+);
+
+orderRoutes.put(
+  '/:id',
+  ...apiRoute({
+    method: 'put',
+    path: '/api/orders/{id}',
+    tags: ['Orders'],
+    summary: 'Update order by id',
+    schemas: {
+      params: uuidIdParamsSchema,
+      body: updateOrderBodySchema,
+    },
+    responses: {
+      200: jsonResponse('Updated order', orderResponseSchema),
+      400: jsonResponse('Validation error', errorResponseSchema),
+      404: jsonResponse('Order not found', errorResponseSchema),
+    },
+    handler: updateOrder,
   }),
 );
