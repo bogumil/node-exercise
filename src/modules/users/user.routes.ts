@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { apiRoute } from '../../shared/http/api-route';
+import { setCacheControl } from '../../shared/http/cache-control.middleware';
 import { jsonResponse } from '../../shared/http/json-response';
 import { errorResponseSchema } from '../../shared/schemas/error-response.schema';
 import { uuidIdParamsSchema } from '../../shared/schemas/id.schema';
@@ -13,6 +14,8 @@ import {
 } from './user.schemas';
 
 export const userRoutes = Router();
+
+userRoutes.use(setCacheControl);
 
 userRoutes.get(
   '/',
