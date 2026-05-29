@@ -83,7 +83,6 @@ The seed script creates:
 - 2 organizations
 - 10 users
 - 20 orders
-All generated orders use valid user and organization references and past dates.
 
 ## Tests
 Run the unit test suite:
@@ -136,6 +135,6 @@ Pino is used for structured logging.
 - Sensitive headers such as authorization and cookies are redacted.
 
 ## Caching
-User and Organization responses can be cached by clients for 10 minutes.
-Order responses can use ETag-based caching and return 304 Not Modified when the client already has a current representation.
-Server-side GET response caching is implemented with an in-memory cache using a 10-minute TTL.
+- User and Organization responses can be cached by clients for 10 minutes.
+- Order responses can use ETag-based caching and return 304 Not Modified when the client already has a current representation.
+- Server-side GET response caching is implemented with an in-memory cache using a 10-minute TTL.
