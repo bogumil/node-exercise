@@ -1,3 +1,6 @@
+import { invalidateOrders, invalidateUsers } from '../../shared/cache/cache.invalidation';
+import { cacheKeys } from '../../shared/cache/cache.keys';
+import { getOrSet } from '../../shared/cache/cache.service';
 import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination/pagination.types';
 import { organizationRepository } from '../organizations/organization.repository';
@@ -10,29 +13,35 @@ export const userService = {
     await validateOrganizationExists(dto.organizationId);
     const user = await userRepository.create(dto);
 
+    invalidateUsers();
+
     return toUserResponseDto(user);
   },
 
   async findById(id: string): Promise<UserResponseDto> {
-    const user = await userRepository.findById(id);
+    return getOrSet(cacheKeys.users.detail(id), async () => {
+      const user = await userRepository.findById(id);
 
-    if (!user) {
-      throw new NotFoundError();
-    }
+      if (!user) {
+        throw new NotFoundError();
+      }
 
-    return toUserResponseDto(user);
+      return toUserResponseDto(user);
+    });
   },
 
   async list(query: ListUserQueryDto): Promise<PaginatedResponseDto<UserResponseDto>> {
-    const result = await userRepository.findMany(query);
+    return getOrSet(cacheKeys.users.list(JSON.stringify(query)), async () => {
+      const result = await userRepository.findMany(query);
 
-    return toPaginatedResponseDto(
-      {
-        items: result.items.map(toUserResponseDto),
-        totalItems: result.totalItems,
-      },
-      query,
-    );
+      return toPaginatedResponseDto(
+        {
+          items: result.items.map(toUserResponseDto),
+          totalItems: result.totalItems,
+        },
+        query,
+      );
+    });
   },
 
   async updateById(id: string, dto: UpdateUserBodyDto): Promise<UserResponseDto> {
@@ -45,6 +54,9 @@ export const userService = {
     if (!user) {
       throw new NotFoundError();
     }
+
+    invalidateUsers();
+    invalidateOrders();
 
     return toUserResponseDto(user);
   },
@@ -65,6 +77,9 @@ export const userService = {
     if (!deleted) {
       throw new NotFoundError();
     }
+
+    invalidateUsers();
+    invalidateOrders();
   },
 };
 

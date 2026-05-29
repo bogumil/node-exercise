@@ -1,3 +1,6 @@
+import { invalidateOrders } from '../../shared/cache/cache.invalidation';
+import { cacheKeys } from '../../shared/cache/cache.keys';
+import { getOrSet } from '../../shared/cache/cache.service';
 import { NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination/pagination.types';
 import { organizationRepository } from '../organizations/organization.repository';
@@ -36,29 +39,37 @@ export const orderService = {
       });
     }
 
-    return orderRepository.create(dto);
+    const result = await orderRepository.create(dto);
+
+    invalidateOrders();
+
+    return result;
   },
 
   async list(query: ListOrderQueryDto): Promise<PaginatedResponseDto<OrderListItemResponseDto>> {
-    const result = await orderRepository.findMany(query);
+    return getOrSet(cacheKeys.orders.list(JSON.stringify(query)), async () => {
+      const result = await orderRepository.findMany(query);
 
-    return toPaginatedResponseDto(
-      {
-        items: result.items.map(toOrderListItemResponseDto),
-        totalItems: result.totalItems,
-      },
-      query,
-    );
+      return toPaginatedResponseDto(
+        {
+          items: result.items.map(toOrderListItemResponseDto),
+          totalItems: result.totalItems,
+        },
+        query,
+      );
+    });
   },
 
   async findById(id: string): Promise<OrderResponseDto> {
-    const order = await orderRepository.findById(id);
+    return getOrSet(cacheKeys.orders.detail(id), async () => {
+      const order = await orderRepository.findById(id);
 
-    if (!order) {
-      throw new NotFoundError();
-    }
+      if (!order) {
+        throw new NotFoundError();
+      }
 
-    return order;
+      return order;
+    });
   },
 
   async updateById(id: string, dto: UpdateOrderBodyDto): Promise<OrderResponseDto> {
@@ -99,6 +110,8 @@ export const orderService = {
       throw new NotFoundError();
     }
 
+    invalidateOrders();
+
     return updatedOrder;
   },
 
@@ -108,6 +121,8 @@ export const orderService = {
     if (!deleted) {
       throw new NotFoundError();
     }
+
+    invalidateOrders();
   },
 };
 

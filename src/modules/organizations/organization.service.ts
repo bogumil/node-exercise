@@ -1,3 +1,10 @@
+import {
+  invalidateOrders,
+  invalidateOrganizations,
+  invalidateUsers,
+} from '../../shared/cache/cache.invalidation';
+import { cacheKeys } from '../../shared/cache/cache.keys';
+import { getOrSet } from '../../shared/cache/cache.service';
 import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { type PaginatedResponseDto, toPaginatedResponseDto } from '../../shared/pagination/pagination.types';
 import { organizationRepository } from './organization.repository';
@@ -15,29 +22,35 @@ export const organizationService = {
 
     const organization = await organizationRepository.create(dto);
 
+    invalidateOrganizations();
+
     return toOrganizationResponseDto(organization);
   },
 
   async findById(id: string): Promise<OrganizationResponseDto> {
-    const organization = await organizationRepository.findById(id);
+    return getOrSet(cacheKeys.organizations.detail(id), async () => {
+      const organization = await organizationRepository.findById(id);
 
-    if (!organization) {
-      throw new NotFoundError();
-    }
+      if (!organization) {
+        throw new NotFoundError();
+      }
 
-    return toOrganizationResponseDto(organization);
+      return toOrganizationResponseDto(organization);
+    });
   },
 
   async list(query: ListOrganizationQueryDto): Promise<PaginatedResponseDto<OrganizationResponseDto>> {
-    const result = await organizationRepository.findMany(query);
+    return getOrSet(cacheKeys.organizations.list(JSON.stringify(query)), async () => {
+      const result = await organizationRepository.findMany(query);
 
-    return toPaginatedResponseDto(
-      {
-        items: result.items.map(toOrganizationResponseDto),
-        totalItems: result.totalItems,
-      },
-      query,
-    );
+      return toPaginatedResponseDto(
+        {
+          items: result.items.map(toOrganizationResponseDto),
+          totalItems: result.totalItems,
+        },
+        query,
+      );
+    });
   },
 
   async updateById(id: string, dto: UpdateOrganizationBodyDto): Promise<OrganizationResponseDto> {
@@ -48,6 +61,10 @@ export const organizationService = {
     if (!organization) {
       throw new NotFoundError();
     }
+
+    invalidateOrganizations();
+    invalidateUsers();
+    invalidateOrders();
 
     return toOrganizationResponseDto(organization);
   },
@@ -71,6 +88,10 @@ export const organizationService = {
     if (!deleted) {
       throw new NotFoundError();
     }
+
+    invalidateOrganizations();
+    invalidateUsers();
+    invalidateOrders();
   },
 };
 
