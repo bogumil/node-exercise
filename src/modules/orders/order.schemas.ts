@@ -49,6 +49,8 @@ export type OrderListItemResponseDto = z.infer<typeof orderListItemResponseSchem
 export const orderResponseSchema = z
   .strictObject({
     id: z.uuidv4(),
+    organizationId: z.uuidv4(),
+    userId: z.uuidv4(),
     totalAmount: moneyAmountSchema,
     orderDate: z.iso.datetime(),
     user: userResponseSchema,

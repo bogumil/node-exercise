@@ -55,6 +55,8 @@ const user = {
 
 const order = {
   id: orderId,
+  organizationId,
+  userId,
   totalAmount: 123.45,
   orderDate: '2026-05-27T10:00:00.000Z',
   user,

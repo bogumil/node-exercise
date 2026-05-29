@@ -19,9 +19,7 @@ function toOrderWithRelations(model: OrderModel): OrderWithRelations {
   }
 
   return {
-    id: model.id,
-    totalAmount: Number(model.totalAmount),
-    orderDate: model.orderDate.toISOString(),
+    ...toOrder(model),
     user: {
       id: model.user.id,
       organizationId: model.user.organizationId,

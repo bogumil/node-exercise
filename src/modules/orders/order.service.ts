@@ -13,7 +13,7 @@ import type {
   OrderResponseDto,
   UpdateOrderBodyDto,
 } from './order.schemas';
-import type { Order } from './order.types';
+import type { Order, OrderWithRelations } from './order.types';
 
 export const orderService = {
   async create(dto: CreateOrderBodyDto): Promise<OrderResponseDto> {
@@ -43,7 +43,7 @@ export const orderService = {
 
     invalidateOrders();
 
-    return result;
+    return toOrderResponseDto(result);
   },
 
   async list(query: ListOrderQueryDto): Promise<PaginatedResponseDto<OrderListItemResponseDto>> {
@@ -68,7 +68,7 @@ export const orderService = {
         throw new NotFoundError();
       }
 
-      return order;
+      return toOrderResponseDto(order);
     });
   },
 
@@ -82,8 +82,8 @@ export const orderService = {
       throw new NotFoundError();
     }
 
-    const organizationId = dto.organizationId ?? existingOrder.organization.id;
-    const userId = dto.userId ?? existingOrder.user.id;
+    const organizationId = dto.organizationId ?? existingOrder.organizationId;
+    const userId = dto.userId ?? existingOrder.userId;
 
     const [organization, user] = await Promise.all([
       organizationRepository.findById(organizationId),
@@ -112,7 +112,7 @@ export const orderService = {
 
     invalidateOrders();
 
-    return updatedOrder;
+    return toOrderResponseDto(updatedOrder);
   },
 
   async deleteById(id: string): Promise<void> {
@@ -149,5 +149,17 @@ function toOrderListItemResponseDto(order: Order): OrderListItemResponseDto {
     userId: order.userId,
     totalAmount: order.totalAmount,
     orderDate: order.orderDate,
+  };
+}
+
+export function toOrderResponseDto(order: OrderWithRelations): OrderResponseDto {
+  return {
+    id: order.id,
+    organizationId: order.organizationId,
+    userId: order.userId,
+    totalAmount: order.totalAmount,
+    orderDate: order.orderDate,
+    user: order.user,
+    organization: order.organization,
   };
 }

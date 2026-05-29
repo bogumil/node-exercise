@@ -9,10 +9,7 @@ export type Order = {
   orderDate: string;
 };
 
-export type OrderWithRelations = {
-  id: string;
-  totalAmount: number;
-  orderDate: string;
+export type OrderWithRelations = Order & {
   user: User;
   organization: Organization;
 };
