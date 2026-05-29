@@ -40,6 +40,13 @@ Run the API in development mode:
 npm run dev
 ```
 The API will be available at:```http://localhost:3001```
+
+### API Documentation
+
+Swagger UI will be available at:```http://localhost:3001/swagger```
+
+OpenAPI JSON will be available at:```http://localhost:3001/swagger/json```
+
 ## Run With Docker
 Build and run the production-like stack, including the app and MySQL:
 ```bash
@@ -56,11 +63,6 @@ Remove Docker volumes if you want a clean database:
 ```bash
 docker compose --env-file .env.docker -f docker-compose.yaml down -v
 ```
-
-## API Documentation
-Swagger UI is available at:```http://localhost:3000/swagger```
-
-OpenAPI JSON is available at:```http://localhost:3000/swagger/json```
 
 ## Health Checks
 Liveness probe:
