@@ -35,3 +35,7 @@ export function invalidatePrefix(prefix: string): void {
 export function invalidateKey(key: string): void {
   cache.delete(key);
 }
+
+export function isCacheReady(): boolean {
+  return cache.size >= 0;
+}

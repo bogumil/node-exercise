@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import env from '../../config/env';
 import { sequelize } from '../../infrastructure/database/sequelize';
+import { isCacheReady } from '../../shared/cache/cache.service';
 
 export function getHealth(_req: Request, res: Response) {
   return res.status(200).json({
@@ -21,8 +22,7 @@ export async function getReadiness(_req: Request, res: Response) {
     checks.database.status = 'ERROR';
   }
 
-  // todo - implement cache check when it is added.
-  checks.cache.status = 'OK';
+  checks.cache.status = isCacheReady() ? 'OK' : 'ERROR';
 
   const ready = checks.database.status === 'OK' && checks.cache.status === 'OK';
 
