@@ -6,11 +6,22 @@ import {
 import { organizationResponseSchema } from '../organizations/organization.schemas';
 import { userResponseSchema } from '../users/user.schemas';
 
+function hasAtMostTwoDecimalPlaces(value: number): boolean {
+  const text = value.toString();
+
+  if (text.includes('e')) {
+    return false;
+  }
+
+  const [, decimalPart = ''] = text.split('.');
+  return decimalPart.length <= 2;
+}
+
 const moneyAmountSchema = z
   .number()
-  .nonnegative('Total amount cannot be negative')
+  .positive('Total amount has to be greater than 0')
   .max(9999999999.99, 'Total amount is too large')
-  .refine((value) => Number.isInteger(value * 100), {
+  .refine(hasAtMostTwoDecimalPlaces, {
     message: 'Total amount can have at most 2 decimal places',
   });
 
