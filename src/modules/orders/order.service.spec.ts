@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { cache } from '../../shared/cache/cache.service';
 import { NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { organizationRepository } from '../organizations/organization.repository';
 import { userRepository } from '../users/user.repository';
@@ -62,6 +63,7 @@ const order = {
 
 describe('orderService', () => {
   beforeEach(() => {
+    cache.clear();
     jest.clearAllMocks();
     jest.useFakeTimers().setSystemTime(new Date('2026-05-28T00:00:00Z'));
 

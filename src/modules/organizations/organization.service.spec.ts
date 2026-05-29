@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { cache } from '../../shared/cache/cache.service';
 import { NotFoundError, ValidationError } from '../../shared/errors/http-errors';
 import { organizationRepository } from './organization.repository';
 import { organizationService } from './organization.service';
@@ -18,6 +19,7 @@ const repo = jest.mocked(organizationRepository);
 
 describe('organizationService', () => {
   beforeEach(() => {
+    cache.clear();
     jest.clearAllMocks();
     jest.useFakeTimers().setSystemTime(new Date('2026-05-28T00:00:00Z'));
     repo.countDeleteBlockers.mockResolvedValue({ users: 0, orders: 0 });
